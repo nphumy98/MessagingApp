@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Messaging App</string>
+    <string name="defaultmessage">Hello World</string>
+    <string name="stringButtonSend">Send</string>
+</resources>
