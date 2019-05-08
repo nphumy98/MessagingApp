@@ -1,6 +1,7 @@
 package nz.ac.aut.dms.android.messagingapp;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.preference.EditTextPreference;
 import android.support.annotation.NonNull;
@@ -21,8 +22,9 @@ import java.io.StringWriter;
 public class MainActivity extends AppCompatActivity {
     private EditText phoneNumber;
     private EditText text;
-    private Button sendButton;
-    private final int SEND_SMS_PERMISSION_REQUEST=1;
+    private final int SEND_SMS_READ_PHONE_STATE_REQUEST_CODE=1;
+
+    private String[] permissionList= {Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,19 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
         phoneNumber= (EditText) findViewById(R.id.phoneNumberEditText);
         text= (EditText) findViewById(R.id.messageEditText);
-        sendButton= (Button) findViewById(R.id.sendButton);
 
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-                !=PackageManager.PERMISSION_GRANTED)
+        //check for permission
+        if(!hasPermission(this, permissionList))
         {
-            //if we need to explain to user that they need to allow use sms
-            if (shouldShowRequestPermissionRationale(Manifest.permission.SEND_SMS)) {
-                Toast.makeText(this,"Please allow send sms permission!", Toast.LENGTH_SHORT).show();
-            }
-            //ask user
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SEND_SMS_PERMISSION_REQUEST);
+            ActivityCompat.requestPermissions(this, permissionList,SEND_SMS_READ_PHONE_STATE_REQUEST_CODE);
         }
-
 
     }
 
@@ -72,11 +67,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private boolean hasPermission(Context context, String[] permissionList)
+    {
+        for(String aPermission: permissionList)
+        {
+            if(ActivityCompat.checkSelfPermission(this, aPermission)
+                    !=PackageManager.PERMISSION_GRANTED)
+            {
+                //if we need to explain to user that they need to allow use sms
+                if (shouldShowRequestPermissionRationale(aPermission)) {
+                    Toast.makeText(this,"Please allow send sms permission!", Toast.LENGTH_SHORT).show();
+                }
+                return false;
+//                //ask user
+//                ActivityCompat.requestPermissions(this, new String[]{aPermission}, SEND_SMS_PERMISSION_REQUEST);
+            }
+
+        }
+        return true;
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode== SEND_SMS_PERMISSION_REQUEST)
+        if(requestCode== SEND_SMS_READ_PHONE_STATE_REQUEST_CODE)
         {
             if (grantResults.length>0&& grantResults[0]== PackageManager.PERMISSION_GRANTED)
             {
