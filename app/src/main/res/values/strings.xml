@@ -2,4 +2,5 @@
     <string name="app_name">Messaging App</string>
     <string name="defaultmessage">Hello World</string>
     <string name="stringButtonSend">Send</string>
+    <string name="stringButtonMainActivty">Start Message Activity</string>
 </resources>
